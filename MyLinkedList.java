@@ -31,22 +31,9 @@ public class MyLinkedList<E> {
     }
 
     public E get(int index) {
-        if (index >= size) {
+        Node SearchNode = SearchIndex(index);
+        if (SearchNode == null) {
             return null;
-        }
-        Node SearchNode = new Node();
-        if (index <= size/2) {
-            SearchNode = first;
-            for (int i = 0; i < index; i++) {
-                SearchNode = SearchNode.next;
-            }
-        }
-        else {
-            SearchNode = last;
-            int count = size -1 - index;
-            for (int i = 0; i < count; i++) {
-                SearchNode = SearchNode.prev;
-            }
         }
 
         return SearchNode.data;
@@ -70,40 +57,27 @@ public class MyLinkedList<E> {
         size++;
     }
 
-    public void add(int index, E e) {
+    public boolean add(int index, E e) {
         if (index == 0) {
-            Node OldNode = first;
-            Node NewNext = new Node();
-            NewNext.data = e;
-            NewNext.next = OldNode;
-            first = NewNext;
+            addFirst(e);
+            return true;
+        }
+        else if (index == size) {
+            addLast(e);
+            return true;
+        }
+        Node SearchNode = SearchIndex(index);
+        if (SearchNode != null) {
+            Node NewNode = new Node();
+            NewNode.data = e;
+            NewNode.next = SearchNode;
+            NewNode.prev = SearchNode.prev;
+            SearchNode.prev.next = NewNode;
+            SearchNode.prev = NewNode;
             size++;
-            return;
+            return true;
         }
-        if (index == size - 1) {
-            add(e);
-        }
-        Node SearchNode = new Node();
-        if (index <= size/2) {
-            SearchNode = first;
-            for (int i = 0; i < index; i++) {
-                SearchNode = SearchNode.next;
-            }
-        }
-        else {
-            SearchNode = last;
-            int count = size -1 - index;
-            for (int i = 0; i < count; i++) {
-                SearchNode = SearchNode.prev;
-            }
-        }
-        Node NewNode = new Node();
-        NewNode.data = e;
-        NewNode.next = SearchNode;
-        NewNode.prev = SearchNode.prev;
-        SearchNode.prev.next = NewNode;
-        SearchNode.prev = NewNode;
-        size++;
+        return false;
     }
 
     public void addFirst(E e) {
@@ -121,64 +95,91 @@ public class MyLinkedList<E> {
     }
 
     public E remove(int index) {
-        if (index >= size) {
-            return null;
-        }
-
-        Node SearchNode = new Node();
         if (index == 0) {
             return removeFirst();
         }
         else if (index == size -1) {
             return removeLast();
         }
-        if (index <= size/2) {
-            SearchNode = first;
-            for (int i = 0; i < index; i++) {
-                SearchNode = SearchNode.next;
-            }
+        Node SearchNode = SearchIndex(index);
+        E removeData = null;
+        if (SearchNode != null) {
+            removeData = SearchNode.data;
+            SearchNode.prev.next = SearchNode.next;
+            SearchNode.next.prev = SearchNode.prev;
+            size--;
         }
-        else {
-            SearchNode = last;
-            int count = size -1 - index;
-            for (int i = 0; i < count; i++) {
-                SearchNode = SearchNode.prev;
-            }
-        }
-        E removeData = SearchNode.data;
-        SearchNode.prev.next = SearchNode.next;
-        SearchNode.next.prev = SearchNode.prev;
-        size--;
         return removeData;
     }
+
     public boolean remove(E e) {
         boolean flag = false;
         if (size == 0) {
             return flag;
         }
         Node SearchNode = first;
-        if (SearchNode.data == e) {
+        while (SearchNode.data == e) {
             first = SearchNode.next;
+            SearchNode = SearchNode.next;
+            first.prev = null;
             size--;
             flag = true;
+            return flag;
         }
-        for (int i = 0; i < size-1; i++) {
-            if (SearchNode.next.data == e) {
-                if (i == size - 2) {
-                    last = SearchNode;
+        while(SearchNode != null) {
+            if (SearchNode.data == e) {
+                if (SearchNode == last) {
+                    last = SearchNode.prev;
                     last.next = null;
                     size--;
                     flag = true;
-                    break;
+                    return flag;
                 }
-                SearchNode.next = SearchNode.next.next;
-                SearchNode.next.prev = SearchNode;
+                SearchNode.next.prev = SearchNode.prev;
+                SearchNode.prev.next = SearchNode.next;
                 size--;
                 flag = true;
+                return flag;
             }
             SearchNode = SearchNode.next;
         }
         return flag;
+
+    }
+
+    public boolean remove(E e, boolean all) {
+        if (all) {
+            boolean flag = false;
+            if (size == 0) {
+                return flag;
+            }
+            Node SearchNode = first;
+            while (SearchNode.data == e) {
+                first = SearchNode.next;
+                SearchNode = SearchNode.next;
+                first.prev = null;
+                size--;
+                flag = true;
+            }
+            while(SearchNode != null) {
+                if (SearchNode.data == e) {
+                    if (SearchNode == last) {
+                        last = SearchNode.prev;
+                        last.next = null;
+                        size--;
+                        flag = true;
+                        break;
+                    }
+                    SearchNode.next.prev = SearchNode.prev;
+                    SearchNode.prev.next = SearchNode.next;
+                    size--;
+                    flag = true;
+                }
+                SearchNode = SearchNode.next;
+            }
+            return flag;
+        }
+        return remove(e);
     }
 
     public E removeFirst() {
@@ -197,6 +198,106 @@ public class MyLinkedList<E> {
         last.next = null;
         size--;
         return removeData;
+    }
+
+    public E set(int index, E e) {
+        Node SearchNode = SearchIndex(index);
+        E removeData = null;
+        if (SearchNode != null) {
+            removeData = SearchNode.data;
+            SearchNode.data = e;
+        }
+        return removeData;
+    }
+
+    public int count(E e) {
+        int count = 0;
+        Node SearchNode = first;
+        while (SearchNode!= null) {
+            if (SearchNode.data == e) {
+                count++;
+            }
+            SearchNode = SearchNode.next;
+        }
+        return count;
+    }
+
+    public int indexOf(E e) {
+        int index = -1;
+        Node SearchNode = first;
+        for (int i = 0; i < size; i++) {
+            if (SearchNode.data == e) {
+                index = i;
+                break;
+            }
+            SearchNode = SearchNode.next;
+        }
+        return index;
+    }
+    public int indexOf(E e, int startIndex) {
+        int index = -1;
+        Node SearchNode = SearchIndex(startIndex);
+        for (int i = startIndex; i < size; i++) {
+            if (SearchNode.data == e) {
+                index = i;
+                break;
+            }
+            SearchNode = SearchNode.next;
+        }
+        return index;
+    }
+
+    public int lastIndexOf(E e) {
+        int index = -1;
+        Node SearchNode = last;
+        for (int i = size -1; i >= 0; i--) {
+            if (SearchNode.data == e) {
+                index = i;
+                break;
+            }
+            SearchNode = SearchNode.prev;
+        }
+        return index;
+    }
+
+    public boolean contains(E e) {
+        Node SearchNode = first;
+        while (SearchNode!= null) {
+            if (SearchNode.data == e) {
+                return true;
+            }
+            SearchNode = SearchNode.next;
+        }
+        return false;
+    }
+
+    private Node SearchIndex(int index) {
+        if (index >= size || index < 0) {
+            return null;
+        }
+        else if (index == 0) {
+            return first;
+        }
+        else if (index == size - 1) {
+            return last;
+        }
+
+        Node SearchNode = new Node();
+        if (index <= size/2) {
+            SearchNode = first;
+            for (int i = 0; i < index; i++) {
+                SearchNode = SearchNode.next;
+            }
+        }
+        else {
+            SearchNode = last;
+            int count = size -1 - index;
+            for (int i = 0; i < count; i++) {
+                SearchNode = SearchNode.prev;
+            }
+        }
+
+        return SearchNode;
     }
 
     public boolean isEmpty() {

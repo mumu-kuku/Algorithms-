@@ -134,6 +134,30 @@ public class MySinglyLinkedList<E> {
         return OldFirst.data;
     }
 
+    public boolean set(int index, E e) {
+        if (index >= size) {
+            return false;
+        }
+        Node SearchNode = first;
+        for (int i = 0; i < index; i++) {
+            SearchNode = SearchNode.next;
+        }
+        SearchNode.data = e;
+        return true;
+    }
+
+    public int count(E e) {
+        int count = 0;
+        Node SearchNode = first;
+        for (int i = 0; i < size; i++) {
+            if (SearchNode.data == e) {
+                count++;
+            }
+            SearchNode = SearchNode.next;
+        }
+        return count;
+    }
+
     public boolean isEmpty() {
         if (first == null || size == 0) {
             return true;
