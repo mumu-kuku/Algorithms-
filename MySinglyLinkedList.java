@@ -1,5 +1,6 @@
 package mumu;
 
+// 手写实现基于单向链表实现的列表
 public class MySinglyLinkedList<E> {
     private Node first;
     private int size;
@@ -127,6 +128,34 @@ public class MySinglyLinkedList<E> {
         return flag;
     }
 
+    public boolean removeAll(E e) {
+        boolean flag = false;
+        if (size == 0) {
+            return flag;
+        }
+        Node SearchNode = first;
+        while (SearchNode.data == e) {
+            first = SearchNode.next;
+            SearchNode = SearchNode.next;
+            size--;
+            flag = true;
+        }
+        while(SearchNode.next != null) {
+            if (SearchNode.next.data == e) {
+                if (SearchNode.next.next == null) {
+                    SearchNode.next = null;
+                    size--;
+                    flag = true;
+                    break;
+                }
+                SearchNode.next = SearchNode.next.next;
+                size--;
+                flag = true;
+            }
+        }
+        return flag;
+    }
+
     public E removeFirst() {
         Node OldFirst = first;
         first = OldFirst.next;
@@ -144,6 +173,18 @@ public class MySinglyLinkedList<E> {
         }
         SearchNode.data = e;
         return true;
+    }
+    public int indexOf(E e) {
+        int index = -1;
+        Node SearchNode = first;
+        for (int i = 0; i < size; i++) {
+            if (SearchNode.data == e) {
+                index = i;
+                break;
+            }
+            SearchNode = SearchNode.next;
+        }
+        return index;
     }
 
     public int count(E e) {

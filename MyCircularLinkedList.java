@@ -1,24 +1,24 @@
 package mumu;
 
-// 手写实现基于双向链表的列表
-public class MyLinkedList<E> {
+// 手写实现基于环形链表的列表
+public class MyCircularLinkedList <E> {
     private Node first;
     private Node last;
     private int size;
 
-    public MyLinkedList() {
+    public MyCircularLinkedList() {
         first = null;
         last = null;
         size = 0;
     }
 
-    public MyLinkedList(MyLinkedList other) {
+    public MyCircularLinkedList(MyCircularLinkedList other) {
         Node SearchNode = other.first;
-        while (SearchNode!= null) {
+        size = other.size();
+        for (int i = 0; i < other.size(); i++) {
             add(SearchNode.data);
             SearchNode = SearchNode.next;
         }
-        size = other.size();
     }
 
     public int size() {
@@ -55,8 +55,9 @@ public class MyLinkedList<E> {
         last.next = new Node();
         last.next.data = e;
         last.next.prev = last;
-        last.next.next = null;
+        last.next.next = first;
         last = last.next;
+        first.prev = last;
         size++;
     }
 
@@ -88,6 +89,7 @@ public class MyLinkedList<E> {
         Node NewNode = new Node();
         NewNode.data = e;
         NewNode.next = OldNode;
+        NewNode.prev = last;
         OldNode.prev = NewNode;
         first = NewNode;
         size++;
@@ -124,7 +126,8 @@ public class MyLinkedList<E> {
         while (SearchNode.data == e) {
             first = SearchNode.next;
             SearchNode = SearchNode.next;
-            first.prev = null;
+            first.prev = last;
+            last.next = first;
             size--;
             flag = true;
             return flag;
@@ -133,7 +136,8 @@ public class MyLinkedList<E> {
             if (SearchNode.data == e) {
                 if (SearchNode == last) {
                     last = SearchNode.prev;
-                    last.next = null;
+                    last.next = first;
+                    first.prev = last;
                     size--;
                     flag = true;
                     return flag;
@@ -159,15 +163,17 @@ public class MyLinkedList<E> {
         while (SearchNode.data == e) {
             first = SearchNode.next;
             SearchNode = SearchNode.next;
-            first.prev = null;
+            first.prev = last;
+            last.next = first;
             size--;
             flag = true;
         }
-        while(SearchNode != null) {
+        for (int i = 0; i < size; i++) {
             if (SearchNode.data == e) {
                 if (SearchNode == last) {
                     last = SearchNode.prev;
-                    last.next = null;
+                    last.next = first;
+                    first.prev = last;
                     size--;
                     flag = true;
                     break;
@@ -186,7 +192,8 @@ public class MyLinkedList<E> {
         Node OldFirst = first;
         first = OldFirst.next;
         E removeData = OldFirst.data;
-        first.prev = null;
+        first.prev = last;
+        last.next = first;
         size--;
         return removeData;
     }
@@ -195,7 +202,8 @@ public class MyLinkedList<E> {
         Node OldLast = last;
         last = OldLast.prev;
         E removeData = OldLast.data;
-        last.next = null;
+        last.next = first;
+        first.prev = last;
         size--;
         return removeData;
     }
@@ -213,7 +221,7 @@ public class MyLinkedList<E> {
     public int count(E e) {
         int count = 0;
         Node SearchNode = first;
-        while (SearchNode!= null) {
+        for (int i = 0; i < size; i++) {
             if (SearchNode.data == e) {
                 count++;
             }
@@ -262,7 +270,7 @@ public class MyLinkedList<E> {
 
     public boolean contains(E e) {
         Node SearchNode = first;
-        while (SearchNode!= null) {
+        for (int i = 0; i < size; i++) {
             if (SearchNode.data == e) {
                 return true;
             }
@@ -323,7 +331,7 @@ public class MyLinkedList<E> {
             return str;
         }
         str += "[";
-        while(SearchNode!= null) {
+        for (int i = 0; i < size; i++) {
             if (SearchNode == last) {
                 str += SearchNode.data;
                 break;
