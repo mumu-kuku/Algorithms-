@@ -1,5 +1,6 @@
 package mumu;
 
+// 手写实现基于双向链表的双向队列
 public class MyLinkedDeque <E> {
     private MyDoublyListNode<E> first;
     private MyDoublyListNode<E> last;

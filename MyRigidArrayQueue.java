@@ -1,5 +1,6 @@
 package mumu;
 
+// 手写实现基于固定大小数组实现的队列
 public class MyRigidArrayQueue <E>{
     private Object[] elements;
     private int first;

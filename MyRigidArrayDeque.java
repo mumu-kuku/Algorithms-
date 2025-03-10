@@ -1,26 +1,26 @@
 package mumu;
 
-// 手写实现基于动态数组的队列
-public class MyArrayQueue <E>{
+// 手写实现基于循环数组实现的双端队列
+public class MyRigidArrayDeque <E> {
     private Object[] elements;
     private int first;
     private int size;
     private final int DEFAULT_CAPACITY = 10;
 
     // 无参构造方法
-    public MyArrayQueue(){
-        elements = null;
+    public MyRigidArrayDeque(){
+        elements = new Object[DEFAULT_CAPACITY];
         first = size = 0;
     }
 
     // 指定容量构造方法
-    public MyArrayQueue(int capacity) {
+    public MyRigidArrayDeque(int capacity) {
         elements = new Object[capacity];
         first = size = 0;
     }
 
     // 复制构造方法
-    public MyArrayQueue(MyArrayQueue other){
+    public MyRigidArrayDeque(MyRigidArrayDeque other){
         elements = new Object[other.elements.length];
         for(int i = 0; i < other.elements.length; i++){
             elements[i] = other.elements[i];
@@ -30,7 +30,7 @@ public class MyArrayQueue <E>{
     }
 
     // 可变参数的构造方法
-    public MyArrayQueue(E... elements){
+    public MyRigidArrayDeque(E... elements){
         this.elements = new Object[elements.length];
         for(int i = 0; i < elements.length; i++){
             this.elements[i] = elements[i];
@@ -49,56 +49,76 @@ public class MyArrayQueue <E>{
         return size;
     }
 
-    // 入队操作
-    public boolean push(E element) {
-        // 如果数组已满，扩容
-        if (size == capacity()) {
-            grow(size + 1);
-        }
-        // 计算队尾指针，指向队尾索引的下一个位置
+    // 计算环形数组索引
+    private int index(int i) {
         // 通过取模运算实现循环队列
-        // last如果越过最后一个元素，则从数组的第一个元素开始
-        int last = (first + 1) % capacity();
+        // 当 i 越过数组尾部后，回到头部
+        // 当 i 越过数组头部后，回到尾部
+        return (i + capacity()) % capacity();
+    }
+
+    // 队首入队操作
+    public boolean pushFirst(E element) {
+        if (size == capacity()) {  // 如果数组已满，入队失败
+            return false;
+        }
+        // 队首指针左移一位，若越过头部，则回到尾部
+        first = index(first - 1);
+        elements[first] = element;
+        size++;
+        return true;
+    }
+
+    // 队尾入队操作
+    public boolean pushLast(E element) {
+        if (size == capacity()) {  // 如果数组已满，入队失败
+            return false;
+        }
+        // 队尾指针右移一位，若越过尾部，则回到头部
+        int last = index(first + size);
         elements[last] = element;
         size++;
         return true;
     }
 
-    // 出队操作
-    public E pop() {
-        E val = peek();
-        if (peek() == null) {
+    // 队首出队操作
+    public E popFirst() {
+        if (peekFirst() == null) {
             return null;
         }
         // 队首元素后移一位，若越过尾部，则回到头部
-        first = (first + 1) % capacity();
+        E val = peekFirst();
+        first = index(first + 1);
+        size--;
+        return val;
+    }
+
+    // 队尾出队操作
+    public E popLast() {
+        if (peekLast() == null) {
+            return null;
+        }
+        E val = peekLast();
         size--;
         return val;
     }
 
     // 获取队首元素
-    public E peek() {
+    public E peekFirst() {
         if (isEmpty()) {
             return null;
         }
         return (E) elements[first];
     }
 
-    // 扩容方法
-    private void grow(int minCapacity) {    // 扩容方法
-        int oldCapacity = elements.length;  // 获取当前数组的长度
-        // 计算新的数组长度，新长度为旧长度的1.5倍，如果新长度小于最小容量，则使用最小容量
-        int newCapacity = oldCapacity + (oldCapacity >> 1);
-        // 如果新长度超过了int类型的最大值，则抛出异常
-        if (newCapacity > Integer.MAX_VALUE - 8) {
-            throw new OutOfMemoryError();
+    // 获取队尾元素
+    public E peekLast() {
+        if (isEmpty()) {
+            return null;
         }
-        // 如果新长度小于最小容量，则使用最小容量
-        if (newCapacity < minCapacity) {
-            newCapacity = minCapacity;
-        }
-        // 将当前数组的元素复制到新的数组中
-        elements = java.util.Arrays.copyOf(elements, newCapacity);
+        // 获取队尾指针
+        int last = index(first + size - 1);
+        return (E) elements[last];
     }
 
     // 判断队列是否为空
@@ -112,7 +132,7 @@ public class MyArrayQueue <E>{
         // 从队首开始遍历队列，将元素依次添加到数组中
         // i表示数组的索引，j表示队列的索引
         for (int i = 0, j = first; i < size; i++, j++) {
-            arr[i] = elements[j % capacity()];
+            arr[i] = elements[index(j)];
         }
         return arr;
     }
@@ -134,5 +154,4 @@ public class MyArrayQueue <E>{
         sb.append("]");
         return sb.toString();
     }
-
 }

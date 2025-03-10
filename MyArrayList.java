@@ -92,17 +92,19 @@ public class MyArrayList<E> {      // 模拟ArrayList
     }
 
     // 删除指定索引位置的元素
-    public void remove(int index) {
+    public E remove(int index) {
         // 如果索引越界，则抛出异常
         if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+            return null;
         }
+        E removeElement = (E)elements[index];
         // 将指定位置及其之后的元素前移一位
         for (int i = index; i < size - 1; i++) {
             elements[i] = elements[i+1];
         }
         size--;
         modCount++;
+        return removeElement;
     }
 
     // 删除指定元素
@@ -208,6 +210,11 @@ public class MyArrayList<E> {      // 模拟ArrayList
         elements = new Object[0];
         size = 0;
         modCount++;
+    }
+
+    // 返回MyArrayList对象的数组表示形式
+    public Object[] toArray() {
+        return java.util.Arrays.copyOf(elements, size);
     }
 
     // 返回MyArrayList对象的字符串表示形式
