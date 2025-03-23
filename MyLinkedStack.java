@@ -1,4 +1,4 @@
-package mumu;
+package Linear;
 
 // 手写实现基于单向链表的栈
 public class MyLinkedStack <E>{

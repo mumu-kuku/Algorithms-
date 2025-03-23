@@ -1,4 +1,4 @@
-package mumu;
+package Linear;
 
 // 手写实现基于双向链表的双向队列
 public class MyLinkedDeque <E> {

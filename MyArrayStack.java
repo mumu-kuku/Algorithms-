@@ -1,4 +1,4 @@
-package mumu;
+package Linear;
 
 // 手写实现基于数组的栈
 public class MyArrayStack <E> {

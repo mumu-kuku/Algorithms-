@@ -1,4 +1,4 @@
-package mumu;
+package Linear;
 
 // 手写实现基于动态数组的双向队列
 public class MyArrayDeque<E> {

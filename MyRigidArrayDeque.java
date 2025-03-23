@@ -1,11 +1,11 @@
-package mumu;
+package Linear;
 
 // 手写实现基于循环数组实现的双端队列
 public class MyRigidArrayDeque <E> {
-    private Object[] elements;
-    private int first;
-    private int size;
-    private final int DEFAULT_CAPACITY = 10;
+    private Object[] elements;  // 存储元素的数组
+    private int first;          // 队首指针
+    private int size;           // 队列大小
+    private final int DEFAULT_CAPACITY = 10;    // 默认容量
 
     // 无参构造方法
     public MyRigidArrayDeque(){

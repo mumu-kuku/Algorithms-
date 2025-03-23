@@ -1,4 +1,4 @@
-package mumu;
+package Linear;
 
 // 手写实现基于数组的列表
 public class MyArrayList<E> {      // 模拟ArrayList
@@ -30,9 +30,19 @@ public class MyArrayList<E> {      // 模拟ArrayList
         }
     }
 
+    // 传入列表大小的构造方法
+    public MyArrayList(int capacity) {
+        if (capacity < 0) {
+            throw new IllegalArgumentException("Illegal Capacity: " + capacity);
+        }
+        elements = new Object[capacity];
+        this.size = 0;
+        modCount = 0;
+    }
+
     // 返回指定索引位置的元素
-    public Object get(int index) {
-        return elements[index];
+    public E get(int index) {
+        return (E) elements[index];
     }
 
     // 返回MyArrayList对象中元素的个数

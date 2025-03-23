@@ -1,4 +1,4 @@
-package mumu;
+package Linear;
 
 // 手写实现基于链表的队列
 public class MyLinkedQueue <E>{
