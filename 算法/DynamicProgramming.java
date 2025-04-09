@@ -148,4 +148,93 @@ public class DynamicProgramming {
         }
         return dp[n - 1];
     }
+
+    // 0-1背包问题
+    // 给定一个n个物品和一个容量为cap的背包，第i个物品的重量是wgt[i-1]，价值是val[i-1]
+    // 求在不超过背包容量的前提下，能装入背包的最大价值,每个物品只能选择一次
+
+    // 方法一：暴力搜索
+    public static int knapsack(int[] wgt, int[] val, int i, int c) {
+        if (i == 0 || c == 0)
+            return 0;
+        if (wgt[i - 1] > c)
+            return knapsack(wgt, val, i - 1, c);
+        int no = knapsack(wgt, val, i - 1, c);
+        int yes = knapsack(wgt, val, i - 1, c - wgt[i - 1]) + val[i - 1];
+        return Math.max(no, yes);
+    }
+
+    // 方法二：记忆化搜索
+    public static int knapsack2(int[] wgt, int[] val, int[][] mem, int i, int c) {
+        if (i == 0 || c == 0)
+            return 0;
+        if (mem[i][c]!= -1)
+            return mem[i][c];
+        if (wgt[i - 1] > c)
+            mem[i][c] = knapsack2(wgt, val, mem, i - 1, c);
+        int no = knapsack2(wgt, val, mem, i - 1, c);
+        int yes = knapsack2(wgt, val, mem, i - 1, c - wgt[i - 1]) + val[i - 1];
+        mem[i][c] = Math.max(no, yes);
+        return mem[i][c];
+    }
+
+    // 方法三：动态规划
+    public static int knapsack3(int[] wgt, int[] val, int cap) {
+        int n = wgt.length;
+        int[][] dp = new int[n + 1][cap + 1];
+        for (int i = 1; i <= n; i++) {
+            for (int c = 1; c <= cap; c++) {
+                if (wgt[i - 1] > c)
+                    dp[i][c] = dp[i - 1][c];
+                else
+                    dp[i][c] = Math.max(dp[i - 1][c], dp[i - 1][c - wgt[i - 1]] + val[i - 1]);
+            }
+        }
+        return dp[n][cap];
+    }
+
+    // 空间优化
+    public static int knapsack4(int[] wgt, int[] val, int cap) {
+        int n = wgt.length;
+        int[] dp = new int[cap + 1];
+        for (int i = 1; i <= n; i++) {
+            for (int c = cap; c >= 1; c--) {
+                if (wgt[i - 1] <= c)
+                    dp[c] = Math.max(dp[c], dp[c - wgt[i - 1]] + val[i - 1]);
+            }
+        }
+        return dp[cap];
+    }
+
+    // 完全背包问题
+    // 给定一个n个物品和一个容量为cap的背包，第i个物品的重量是wgt[i-1]，价值是val[i-1]
+    // 求在不超过背包容量的前提下，能装入背包的最大价值,每个物品可以选择多次
+    public static int unboundedKnapsack(int[] wgt, int[] val, int cap) {
+        int n = wgt.length;
+        int[][] dp = new int[n + 1][cap + 1];
+        for (int i = 1; i <= n; i++) {
+            for (int c = 1; c <= cap; c++) {
+                if (wgt[i - 1] > c)
+                    dp[i][c] = dp[i - 1][c];
+                else
+                    dp[i][c] = Math.max(dp[i - 1][c], dp[i][c - wgt[i - 1]] + val[i - 1]);
+            }
+        }
+        return dp[n][cap];
+    }
+    
+    // 完全背包问题空间优化
+    public static int unboundedKnapsack2(int[] wgt, int[] val, int cap) {
+        int n = wgt.length;
+        int[] dp = new int[cap + 1];
+        for (int i = 1; i <= n; i++) {
+            for (int c = 1; c <= cap; c++) {
+                if (wgt[i - 1] > c)
+                    dp[c] = dp[c];
+                else
+                    dp[c] = Math.max(dp[c], dp[c - wgt[i - 1]] + val[i - 1]);
+            }
+        }
+        return dp[cap];
+    }
 }
