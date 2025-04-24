@@ -1,5 +1,7 @@
 package Algorithm;
 
+import java.util.Arrays;
+
 public class DynamicProgramming {
     private DynamicProgramming() {}
 
@@ -236,5 +238,147 @@ public class DynamicProgramming {
             }
         }
         return dp[cap];
+    }
+
+    //给定 𝑛 种硬币，第 𝑖 种硬币的面值为 𝑐𝑜𝑖𝑛𝑠[𝑖 − 1] ，目标金额为 𝑎𝑚𝑡 ，每种硬币可以重复选取，能够凑出目标金额的最少硬币数量。如果无法凑出目标金额，则返回 −1 。
+    public static int coinChange(int[] coins, int amt) {
+        int n  = coins.length;
+        int MAX = amt + 1;
+        int[][] dp = new int[n + 1][amt + 1];
+        for (int a = 1; a <= amt; a++) {
+            dp[0][a] = MAX;
+        }
+        for (int i = 1; i <= n; i++) {
+            for (int a = 1; a <= amt; a++) {
+                if (coins[i - 1] > a)
+                    dp[i][a] = dp[i - 1][a];
+                else
+                    dp[i][a] = Math.min(dp[i - 1][a], dp[i][a - coins[i - 1]] + 1);
+            }
+        }
+        return dp[n][amt] == MAX ? -1 : dp[n][amt];
+    }
+
+    int coinChangeDPComp(int[] coins, int amt) {
+        int n = coins.length;
+        int MAX = amt + 1;
+        // 初始化 dp 表
+        int[] dp = new int[amt + 1];
+        Arrays.fill(dp, MAX);
+        dp[0] = 0;
+        // 状态转移
+        for (int i = 1; i <= n; i++) {
+            for (int a = 1; a <= amt; a++) {
+                if (coins[i - 1] > a) {
+                    // 若超过目标金额，则不选硬币 i
+                    dp[a] = dp[a];
+                } else {
+                    // 不选和选硬币 i 这两种方案的较小值
+                    dp[a] = Math.min(dp[a], dp[a - coins[i - 1]] + 1);
+                }
+            }
+        }
+        return dp[amt] != MAX ? dp[amt] : -1;
+    }
+
+    // 给定 𝑛 种硬币，第 𝑖 种硬币的面值为 𝑐𝑜𝑖𝑛𝑠[𝑖 − 1] ，目标金额为 𝑎𝑚𝑡 ，每种硬币可以重复选取，问凑出目标金额的硬币组合数量。
+    public static int coinChangeIIDP(int[] coins, int amt) {
+        int n = coins.length;
+        // 初始化 dp 表
+        int[][] dp = new int[n + 1][amt + 1];
+        // 初始化首列
+        for (int i = 0; i <= n; i++) {
+            dp[i][0] = 1;
+        }
+        // 状态转移
+        for (int i = 1; i <= n; i++) {
+            for (int a = 1; a <= amt; a++) {
+                if (coins[i - 1] > a) {
+                    // 若超过目标金额，则不选硬币 i
+                    dp[i][a] = dp[i - 1][a];
+                } else {
+                    // 不选和选硬币 i 这两种方案之和
+                    dp[i][a] = dp[i - 1][a] + dp[i][a - coins[i - 1]];
+                }
+            }
+        }
+        return dp[n][amt];
+    }
+
+    // 空间优化
+    public static int coinChangeIIDPComp(int[] coins, int amt) {
+        int n = coins.length;
+        // 初始化 dp 表
+        int[] dp = new int[amt + 1];
+        dp[0] = 1;
+        // 状态转移
+        for (int i = 1; i <= n; i++) {
+            for (int a = 1; a <= amt; a++) {
+                if (coins[i - 1] > a) {
+                    // 若超过目标金额，则不选硬币 i
+                    dp[a] = dp[a];
+                } else {
+                    // 不选和选硬币 i 这两种方案之和
+                    dp[a] = dp[a] + dp[a - coins[i - 1]];
+                }
+            }
+        }
+        return dp[amt];
+    }
+
+    // 输入两个字符串 𝑠 和 𝑡 ，返回将 𝑠 转换为 𝑡 所需的最少编辑步数。你可以在一个字符串中进行三种编辑操作：插入一个字符、删除一个字符、将字符替换为任意一个字符。
+    /* 编辑距离：动态规划 */
+    int editDistanceDP(String s, String t) {
+        int n = s.length(), m = t.length();
+        int[][] dp = new int[n + 1][m + 1];
+        // 状态转移：首行首列
+        for (int i = 1; i <= n; i++) {
+            dp[i][0] = i;
+        }
+        for (int j = 1; j <= m; j++) {
+            dp[0][j] = j;
+        }
+        // 状态转移：其余行和列
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                if (s.charAt(i - 1) == t.charAt(j - 1)) {
+                    // 若两字符相等，则直接跳过此两字符
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    // 最少编辑步数 = 插入、删除、替换这三种操作的最少编辑步数 + 1
+                    dp[i][j] = Math.min(Math.min(dp[i][j - 1], dp[i - 1][j]), dp[i - 1][j - 1]) + 1;
+                }
+            }
+        }
+        return dp[n][m];
+    }
+
+    // 空间优化
+    int editDistanceDPComp(String s, String t) {
+        int n = s.length(), m = t.length();
+        int[] dp = new int[m + 1];
+        // 状态转移：首行
+        for (int j = 1; j <= m; j++) {
+            dp[j] = j;
+        }
+        // 状态转移：其余行
+        for (int i = 1; i <= n; i++) {
+            // 状态转移：首列
+            int leftup = dp[0]; // 暂存 dp[i-1, j-1]
+            dp[0] = i;
+            // 状态转移：其余列
+            for (int j = 1; j <= m; j++) {
+                int temp = dp[j];
+                if (s.charAt(i - 1) == t.charAt(j - 1)) {
+                    // 若两字符相等，则直接跳过此两字符
+                    dp[j] = leftup;
+                } else {
+                    // 最少编辑步数 = 插入、删除、替换这三种操作的最少编辑步数 + 1
+                    dp[j] = Math.min(Math.min(dp[j - 1], dp[j]), leftup) + 1;
+                }
+                leftup = temp; // 更新为下一轮的 dp[i-1, j-1]
+            }
+        }
+        return dp[m];
     }
 }
