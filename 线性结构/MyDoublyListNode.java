@@ -1,7 +1,7 @@
 package Linear;
 
 // 一个简单的双向链表结点类
-public class MyDoublyListNode <T> extends MyListNode<T>{
+public class MyDoublyListNode <T> extends List_Node<T> {
     public MyDoublyListNode<T> prev;    // 指向前一个结点的指针
     public MyDoublyListNode<T> next;    // 指向后一个结点的指针
     public T data;                      // 存储数据的变量

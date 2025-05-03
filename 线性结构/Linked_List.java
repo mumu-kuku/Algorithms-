@@ -1,20 +1,25 @@
 package Linear;
 
+import java.util.Iterator;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
 // 手写实现基于双向链表的列表
-public class MyLinkedList<E> {
+public class Linked_List<E> extends My_List<E> implements Iterable<E> {
     private Node first;     // 头节点
     private Node last;      // 尾节点
     private int size;       // 列表大小
 
     // 无参构造方法
-    public MyLinkedList() {
+    public Linked_List() {
         first = null;
         last = null;
         size = 0;
     }
 
     // 传入一个MyLinkedList对象作为参数的构造方法
-    public MyLinkedList(MyLinkedList other) {
+    public Linked_List(Linked_List other) {
         Node SearchNode = other.first;
         while (SearchNode!= null) {
             add(SearchNode.data);
@@ -341,6 +346,25 @@ public class MyLinkedList<E> {
         return false;
     }
 
+    @Override
+    public boolean addAll(My_List<E> other) {
+        if (other.isEmpty())
+            return false;
+        for (int i = 0; i < other.size(); i++) {
+            add(other.get(i));
+        }
+        return true;
+    }
+
+    @Override
+    public E[] toArray() {
+        E[] arr = (E[]) new Object[size];
+        for (int i = 0; i < size; i++) {
+            arr[i] = get(i);
+        }
+        return arr;
+    }
+
     // 查找指定索引位置的节点
     private Node SearchIndex(int index) {
         if (index < 0 || index >= size) {
@@ -410,6 +434,33 @@ public class MyLinkedList<E> {
         }
         str += "]";
         return str;
+    }
+
+    public void forEach(Consumer<? super E> consumer) {
+        for (Node node = first; node != null; node = node.next) {
+            consumer.accept(node.data);
+        }
+    }
+
+    public Stream<E> Stream() {
+        return StreamSupport.stream(spliterator(), false);
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        return new Iterator<E>() {
+            private Node SearchNode = first;
+            @Override
+            public boolean hasNext() {
+                return SearchNode != null;
+            }
+            @Override
+            public E next() {
+                E data = (E)SearchNode.data;
+                SearchNode = SearchNode.next;
+                return data;
+            }
+        };
     }
 
     // 节点类

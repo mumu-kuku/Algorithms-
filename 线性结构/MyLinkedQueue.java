@@ -2,8 +2,8 @@ package Linear;
 
 // 手写实现基于链表的队列
 public class MyLinkedQueue <E>{
-    private MyListNode<E> first;
-    private MyListNode<E> last;
+    private List_Node<E> first;
+    private List_Node<E> last;
     private int size;
 
     // 无参构造方法
@@ -15,7 +15,7 @@ public class MyLinkedQueue <E>{
 
     // 传入一个MyLinkedQueue对象作为参数的构造方法
     public MyLinkedQueue(MyLinkedQueue other) {
-        MyListNode SearchNode = other.first;
+        List_Node SearchNode = other.first;
         // 遍历传入的MyLinkedStack对象，将每个节点的数据添加到当前MyLinkedStack对象中
         while (SearchNode!= null) {
             push((E)SearchNode.data);
@@ -41,7 +41,7 @@ public class MyLinkedQueue <E>{
 
     // 入队操作
     public void push(E e) {
-        MyListNode node = new MyListNode<>(e);
+        List_Node node = new List_Node<>(e);
         // 如果当前MyLinkedQueue对象为空，将头尾节点都指向新节点
         if (first == null) {
             first = node;
@@ -67,7 +67,7 @@ public class MyLinkedQueue <E>{
         }
         // 将传入的MyLinkedStack对象的数据复制到当前MyLinkedStack对象中
         this.size = other.size();
-        MyListNode SearchNode = other.first;
+        List_Node SearchNode = other.first;
         while (SearchNode != null) {
             push((E)SearchNode.data);
             SearchNode = SearchNode.next;
@@ -121,7 +121,7 @@ public class MyLinkedQueue <E>{
         if (isEmpty()) {
             return null;
         }
-        MyListNode SearchNode = first;
+        List_Node SearchNode = first;
         Object[] arr = new Object[size];
         // 遍历链表，将每个节点的数据添加到数组中
         for (int i = 0; i < size; i++) {
@@ -136,7 +136,7 @@ public class MyLinkedQueue <E>{
     public String toString() {
         String str = "";
         // 如果链表为空，则返回空数组
-        MyListNode SearchNode = first;
+        List_Node SearchNode = first;
         if (SearchNode == null) {
             str += "[]";
             return str;

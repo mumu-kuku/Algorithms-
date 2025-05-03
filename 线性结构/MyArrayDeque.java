@@ -2,21 +2,21 @@ package Linear;
 
 // 手写实现基于动态数组的双向队列
 public class MyArrayDeque<E> {
-    private MyArrayList<E> elements;
+    private Array_List<E> elements;
 
     // 无参构造方法
     public MyArrayDeque() {
-        elements = new MyArrayList<>();
+        elements = new Array_List<>();
     }
 
     // 复制构造方法
     public MyArrayDeque(MyArrayDeque<E> other) {
-        elements = new MyArrayList<>(other.elements);
+        elements = new Array_List<>(other.elements);
     }
 
     // 可变参数的构造方法
     public MyArrayDeque(E... elements) {
-        this.elements = new MyArrayList<>();
+        this.elements = new Array_List<>();
         for (E element : elements) {
             this.elements.add(element);
         }

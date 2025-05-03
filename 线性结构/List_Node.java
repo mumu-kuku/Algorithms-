@@ -1,24 +1,24 @@
 package Linear;
 
 // 一个简单的链表节点类
-public class MyListNode<T> {
+public class List_Node<T> {
     public T data;          // 存储节点的数据
-    public MyListNode next; // 指向下一个节点的引用
+    public List_Node next; // 指向下一个节点的引用
 
     // 无参构造方法
-    public MyListNode() {
+    public List_Node() {
         this.data = null;
         this.next = null;
     }
 
     // 传入一个节点数据的构造方法
-    public MyListNode(T data) {
+    public List_Node(T data) {
         this.data = data;
         this.next = null;
     }
 
     // 传入一个节点数据和下一个节点引用的构造方法
-    public MyListNode(T data, MyListNode next) {
+    public List_Node(T data, List_Node next) {
         this.data = data;
         this.next = next;
     }

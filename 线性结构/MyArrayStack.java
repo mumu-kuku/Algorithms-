@@ -2,11 +2,11 @@ package Linear;
 
 // 手写实现基于数组的栈
 public class MyArrayStack <E> {
-    private MyArrayList<E> stack;
+    private Array_List<E> stack;
 
     // 无参构造方法，创建一个空的MyArrayStack对象
     public MyArrayStack() {
-        stack = new MyArrayList<>();
+        stack = new Array_List<>();
     }
 
     // 传入一个MyArrayStack对象，复制其元素到新的MyArrayStack对象中
@@ -31,7 +31,7 @@ public class MyArrayStack <E> {
 
     // 将一个可变参数中的元素拷贝到MyArrayStack对象中
     public void copyArray(E... elements) {
-        stack = new MyArrayList<>(elements);
+        stack = new Array_List<>(elements);
         for (int i = 0; i < elements.length; i++) {
             stack.add(elements[i]);
         }
@@ -40,7 +40,7 @@ public class MyArrayStack <E> {
     // 将一个MyArrayStack对象中的所有元素拷贝到当前MyArrayStack对象
     public void copyStack(MyArrayStack other) {
         // 如果传入的MyArrayStack对象为空,则清空当前MyArrayStack对象
-        stack = new MyArrayList<>();
+        stack = new Array_List<>();
         if (other.isEmpty() || other == null || other == this) {
             return;
         }

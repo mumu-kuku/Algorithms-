@@ -1,43 +1,42 @@
 package Linear;
 
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+
 // 手写实现基于数组的列表
-public class MyArrayList<E> {      // 模拟ArrayList
+public class Array_List<E> extends My_List<E> implements Iterable<E> {      // 模拟ArrayList
     private Object[] elements;     // 存储元素的数组
     private int size = 0;          // 记录元素个数
     private static final int DEFAULT_CAPACITY = 10;     // 默认容量
-    private int modCount = 0;       // 记录修改次数
 
-    // 无参构造方法，创建一个空的MyArrayList对象
-    public MyArrayList() {
-        elements = new Object[0];
+    // 无参构造方法，创建一个空的Array_List对象
+    public Array_List() {
+        elements = new Object[DEFAULT_CAPACITY];
     }
 
-    // 传入一个MyArrayList对象，复制其元素到新的MyArrayList对象中
-    public MyArrayList(MyArrayList other) {
+    // 传入一个Array_List对象，复制其元素到新的Array_List对象中
+    public Array_List(My_List<E> other) {
         this.size = other.size();
         elements = new Object[size];
-        for (int i = 0; i < size; i++) {
-            elements[i] = other.get(i);
-        }
+        System.arraycopy(other.toArray(), 0, this.elements, 0, size);
     }
 
-    // 传入一个可变参数，将其元素添加到新的MyArrayList对象中
-    public MyArrayList(E... elements) {
+    // 传入一个可变参数，将其元素添加到新的Array_List对象中
+    public Array_List(E... elements) {
         this.size = elements.length;
         this.elements = new Object[size];
-        for (int i = 0; i < size; i++) {
-            this.elements[i] = elements[i];
-        }
+        System.arraycopy(elements, 0, this.elements, 0, size);
     }
 
     // 传入列表大小的构造方法
-    public MyArrayList(int capacity) {
+    public Array_List(int capacity) {
         if (capacity < 0) {
             throw new IllegalArgumentException("Illegal Capacity: " + capacity);
         }
         elements = new Object[capacity];
         this.size = 0;
-        modCount = 0;
     }
 
     // 返回指定索引位置的元素
@@ -45,29 +44,26 @@ public class MyArrayList<E> {      // 模拟ArrayList
         return (E) elements[index];
     }
 
-    // 返回MyArrayList对象中元素的个数
+    // 返回Array_List对象中元素的个数
     public int size() {
         return size;
     }
 
-    // 返回MyArrayList的容量
+    // 返回Array_List的容量
     public int capacity() {
         return elements.length;
     }
 
-    // 将指定元素添加到MyArrayList对象的末尾
-    public boolean add(E element) {
-        modCount++;
+    // 将指定元素添加到Array_List对象的末尾
+    public void add(E element) {
         if (size == elements.length) {  // 如果数组已满，则扩容
             grow(size + 1);  // 调用grow方法
         }
         elements[size++] = element;     // 将元素添加到数组末尾，并更新size
-        return true;
     }
 
-    // 将指定元素插入到MyArrayList对象的指定位置
+    // 将指定元素插入到Array_List对象的指定位置
     public boolean add(int index, E element) {
-        modCount++;
         if (index < 0 || index > size) {    // 如果索引越界，则抛出异常
             return false;
         }
@@ -83,9 +79,9 @@ public class MyArrayList<E> {      // 模拟ArrayList
         return true;
     }
 
-    // 将一个MyArrayList对象中的所有元素添加到当前MyArrayList对象的末尾
-    public boolean addAll(MyArrayList other) {
-        // 如果传入的MyArrayList对象为空，则返回false
+    // 将一个Array_List对象中的所有元素添加到当前Array_List对象的末尾
+    public boolean addAll(My_List<E> other) {
+        // 如果传入的Array_List对象为空，则返回false
         if (other.size() == 0) {
             return false;
         }
@@ -94,10 +90,9 @@ public class MyArrayList<E> {      // 模拟ArrayList
             grow(size + other.size());  // 调用grow方法
         }
         for (int i = 0; i < other.size(); i++) {
-            // 将传入的MyArrayList对象中的元素添加到当前MyArrayList对象的末尾
+            // 将传入的Array_List对象中的元素添加到当前Array_List对象的末尾
             elements[size++] = other.get(i);
         }
-        modCount++;
         return true;
     }
 
@@ -105,7 +100,7 @@ public class MyArrayList<E> {      // 模拟ArrayList
     public E remove(int index) {
         // 如果索引越界，则抛出异常
         if (index < 0 || index >= size) {
-            return null;
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
         }
         E removeElement = (E)elements[index];
         // 将指定位置及其之后的元素前移一位
@@ -113,7 +108,6 @@ public class MyArrayList<E> {      // 模拟ArrayList
             elements[i] = elements[i+1];
         }
         size--;
-        modCount++;
         return removeElement;
     }
 
@@ -167,7 +161,7 @@ public class MyArrayList<E> {      // 模拟ArrayList
         return -1;
     }
 
-    // 返回指定元素在MyArrayList对象中的索引位置
+    // 返回指定元素在Array_List对象中的索引位置
     public int indexOf(E element) {
         for (int i = 0; i < size; i++) {
             // 如果找到指定元素，则返回其索引位置
@@ -178,7 +172,7 @@ public class MyArrayList<E> {      // 模拟ArrayList
         return -1;
     }
 
-    // 返回指定元素在MyArrayList对象中从指定位置开始搜索的索引位置
+    // 返回指定元素在Array_List对象中从指定位置开始搜索的索引位置
     public int indexOf(E element, int startIndex) {
         // 如果指定位置越界，则抛出异常
         if (startIndex < 0 || startIndex >= size) {
@@ -193,7 +187,7 @@ public class MyArrayList<E> {      // 模拟ArrayList
         return -1;
     }
 
-    // 查找指定元素在MyArrayList对象中是否存在
+    // 查找指定元素在Array_List对象中是否存在
     public boolean contains(E element) {
         // 遍历数组，找到第一个与element相等的元素，则返回true，否则返回false
         for (int i = 0; i < size; i++) {
@@ -204,30 +198,55 @@ public class MyArrayList<E> {      // 模拟ArrayList
         return false;
     }
 
-    // 判断MyArrayList对象是否为空
+    // 判断Array_List对象是否为空
     public boolean isEmpty() {
-        // 如果size为0或者elements为null，则返回true，否则返回false
-        if (size == 0 || elements == null) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return size == 0;
     }
 
-    // 清空MyArrayList对象
+    // 清空Array_List对象
     public void clear() {
         elements = new Object[0];
         size = 0;
-        modCount++;
     }
 
-    // 返回MyArrayList对象的数组表示形式
-    public Object[] toArray() {
-        return java.util.Arrays.copyOf(elements, size);
+    // 遍历方法1
+    // 借用Consumer接口
+    // Params:consumer - 遍历要执行的操作,入参:每个元素
+    public void forEach(Consumer<? super E> consumer) {
+        for (int i = 0; i < size; i++) {
+            consumer.accept((E)elements[i]);
+        }
     }
 
-    // 返回MyArrayList对象的字符串表示形式
+    // 遍历方法2
+    // 实现Iterator接口
+    @Override
+    public Iterator<E> iterator() {
+        return new Iterator<E>() {
+            int i = 0;
+            @Override
+            public boolean hasNext() {
+                return i < size;
+            }
+
+            @Override
+            public E next() {
+                return (E)elements[i++];
+            }
+        };
+    }
+
+    // 遍历方法3: 实现Stream流
+    public Stream<E> Stream() {
+        return (Stream<E>) Stream.of(Arrays.copyOfRange(elements, 0, size));
+    }
+
+    // 返回Array_List对象的数组表示形式
+    public E[] toArray() {
+        return (E[]) Arrays.copyOf(elements, size);
+    }
+
+    // 返回Array_List对象的字符串表示形式
     public String toString() {
         if (size == 0) {
             return "[]";
@@ -244,4 +263,6 @@ public class MyArrayList<E> {      // 模拟ArrayList
         sb.append("]");
         return sb.toString();
     }
+
+
 }

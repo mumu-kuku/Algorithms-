@@ -1,18 +1,23 @@
 package Linear;
 
+import java.util.Iterator;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
+
 // 手写实现基于单向链表实现的列表
-public class MySinglyLinkedList<E> {
+public class Singly_Linked_List<E> extends My_List<E> {
     private Node first;     // 头节点
     private int size;       // 列表大小
 
     // 无参构造方法
-    public MySinglyLinkedList() {
+    public Singly_Linked_List() {
         first = null;
         size = 0;
     }
 
     // 传入一个MySinglyLinkedList对象作为参数的构造方法
-    public MySinglyLinkedList(MySinglyLinkedList other) {
+    public Singly_Linked_List(Singly_Linked_List other) {
         for (int i = 0; i < other.size(); i++) {
             add((E) other.get(i));
         }
@@ -63,15 +68,15 @@ public class MySinglyLinkedList<E> {
     }
 
     // 在指定索引处添加一个新的元素
-    public void add(int index, E e) {
+    public boolean add(int index, E e) {
         // 如果索引无效，直接返回
         if (index > size || index < 0) {
-            return;
+            return false;
         }
         // 如果index = 0，直接调用addFirst方法
         if (index == 0) {
             addFirst(e);
-            return;
+            return true;
         }
         // 否则，遍历列表找到指定索引的前一个节点，并将新节点添加到其后面
         Node SearchNode = first;
@@ -83,6 +88,7 @@ public class MySinglyLinkedList<E> {
         NewNext.next = SearchNode.next;
         SearchNode.next = NewNext;
         size++;
+        return true;
     }
 
     // 添加一个新的元素到列表开头
@@ -188,18 +194,19 @@ public class MySinglyLinkedList<E> {
     }
 
     // 修改指定索引处的元素
-    public boolean set(int index, E e) {
-        // 如果索引无效，返回false
+    public E set(int index, E e) {
+        // 如果索引无效，返回null
         if (index >= size || index < 0) {
-            return false;
+            return null;
         }
         // 否则，遍历列表找到指定索引的节点，并修改其data值
         Node SearchNode = first;
         for (int i = 0; i < index; i++) {
             SearchNode = SearchNode.next;
         }
+        E OldData = SearchNode.data;
         SearchNode.data = e;
-        return true;
+        return OldData;
     }
 
     // 查找指定元素的第一个索引
@@ -217,6 +224,36 @@ public class MySinglyLinkedList<E> {
         }
         // 找到了返回索引，没找到返回-1
         return index;
+    }
+
+    @Override
+    public boolean contains(E element) {
+        if (indexOf(element) == -1) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean addAll(My_List<E> other) {
+        if (other == null) {
+            return false;
+        }
+        for (int i = 0; i < other.size(); i++) {
+            add(other.get(i));
+        }
+        return true;
+    }
+
+    @Override
+    public E[] toArray() {
+        E[] array = (E[]) new Object[size];
+        Node SearchNode = first;
+        for (int i = 0; i < size; i++) {
+            array[i] = SearchNode.data;
+            SearchNode = SearchNode.next;
+        }
+        return array;
     }
 
     // 查找指定元素在列表中出现的次数
@@ -265,6 +302,35 @@ public class MySinglyLinkedList<E> {
         }
         str += "]";
         return str;
+    }
+
+    @Override
+    public void forEach(Consumer<? super E> consumer) {
+        for (Node SearchNode = first; SearchNode != null; SearchNode = SearchNode.next) {
+            consumer.accept(SearchNode.data);
+        }
+    }
+
+    @Override
+    public Iterator<E> iterator() {
+        return new Iterator<E>() {
+            private Node current = first;
+            @Override
+            public boolean hasNext() {
+                return current != null;
+            }
+            @Override
+            public E next() {
+                E data = current.data;
+                current = current.next;
+                return data;
+            }
+        };
+    }
+
+    @Override
+    public Stream<E> Stream() {
+        return StreamSupport.stream(spliterator(), false);
     }
 
     // 内部节点类
